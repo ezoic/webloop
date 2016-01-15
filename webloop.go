@@ -3,8 +3,8 @@ package webloop
 import (
 	"errors"
 
-	"github.com/conformal/gotk3/glib"
-	"github.com/sourcegraph/go-webkit2/webkit2"
+	"github.com/ezoic/go-webkit2/webkit2"
+	"github.com/gotk3/gotk3/glib"
 	"github.com/sqs/gojs"
 )
 
@@ -66,6 +66,19 @@ func (v *View) Open(url string) {
 		if !v.destroyed {
 			v.WebView.LoadURI(url)
 		}
+		return false
+	})
+}
+
+// Load HTML from given string with given base URI.
+func (v *View) LoadHTML(content, baseURI string) {
+	v.load = make(chan struct{}, 1)
+	v.lastLoadErr = nil
+	glib.IdleAdd(func() bool {
+		if !v.destroyed {
+			v.WebView.LoadHTML(content, baseURI)
+		}
+
 		return false
 	})
 }
